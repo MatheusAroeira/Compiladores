@@ -18,7 +18,7 @@ public class AnalisadorLexico {
     public AnalisadorLexico(String line) {
         pReserv = new String[]{"int","float","char","boolean","void","if","else","for","while","scanf","println","main","return"};
         operadores = new String[]{"=", "+", "-", "*", "/", "%", "&&", "||", "!", ">", ">=", "<", "<=", "!=", "=="};
-        simb = new String[]{"(", ")", "[", "]", "{", "}", ",", ";"};
+        simb = new String[]{"(", ")", "[", "]", "{", "}", ",", ";","'"};
         tabelaSimb = new ArrayList<String>();
         listTokens = new ArrayList<String>();
         lex = "";
