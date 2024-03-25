@@ -1,7 +1,7 @@
 import java.util.ArrayList;
-
+import java.util.regex.Pattern;
 public class AnalisadorLexico {
-
+    private Pattern identificador = Pattern.compile("[a-zA-Z][a-zA-Z0-9]*");
     private String[] pReserv;
     private String[] operadores;
     private String[] simb;
