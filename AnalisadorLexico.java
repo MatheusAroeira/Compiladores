@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 public class AnalisadorLexico {
     private Pattern identificador = Pattern.compile("[a-zA-Z][a-zA-Z0-9]*");
     private String[] pReserv;
@@ -13,21 +15,53 @@ public class AnalisadorLexico {
     private int index;
     private int[] alfNum;
     private char[] alfChar;
-    private String line;
+    private String[] line;
 
-    public AnalisadorLexico(String line) {
-        pReserv = new String[]{"int","float","char","boolean","void","if","else","for","while","scanf","println","main","return"};
-        operadores = new String[]{"=", "+", "-", "*", "/", "%", "&&", "||", "!", ">", ">=", "<", "<=", "!=", "=="};
-        simb = new String[]{"(", ")", "[", "]", "{", "}", ",", ";"};
+    public AnalisadorLexico(String[] line) {
+        pReserv = new String[] { "int", "float", "char", "boolean", "void", "if", "else", "for", "while", "scanf",
+                "println", "main", "return" };
+        operadores = new String[] { "=", "+", "-", "*", "/", "%", "&&", "||", "!", ">", ">=", "<", "<=", "!=", "==" };
+        simb = new String[] { "(", ")", "[", "]", "{", "}", ",", ";" };
         tabelaSimb = new ArrayList<String>();
         listTokens = new ArrayList<String>();
         lex = "";
         simbolo = "";
         id = 0;
-        alfNum = new int[]{0,1,2,3,4,5,6,7,8,9};
-        alfChar = new char[]{'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
-        'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
+        alfNum = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        alfChar = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
+                's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+                'V', 'W', 'X', 'Y', 'Z' };
         this.line = line;
+    }
+
+    public boolean isString(String lex) {
+        Pattern str = Pattern.compile("[a-zA-Z]*");
+        Matcher matcher = str.matcher(lex);
+        return matcher.matches();
+    }
+
+    public boolean isId(String lex) {
+        Pattern id = Pattern.compile("[a-zA-Z][a-zA-Z0-9]*");
+        Matcher matcher = id.matcher(lex);
+        return matcher.matches();
+    }
+    public boolean isNum(String lex){
+        Pattern id = Pattern.compile("[0-9]*");
+        Matcher matcher = id.matcher(lex);
+        return matcher.matches();
+    }
+
+    public boolean isDecimal(String lex){
+        Pattern id = Pattern.compile("[0-9].[0-9]*");
+        Matcher matcher = id.matcher(lex);
+        return matcher.matches();
+    }
+
+    public boolean isComment(String lex){
+        Pattern com = Pattern.compile("//[a-zA-Z]*");
+        Matcher matcher = com.matcher(lex);
+        return matcher.matches();
     }
 
     public String getpReserv() {
@@ -90,10 +124,4 @@ public class AnalisadorLexico {
         this.index = index;
     }
 
-    public String getLine() {
-        return this.line;
-    }
-
-
-    
 }
