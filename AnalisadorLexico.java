@@ -28,25 +28,46 @@ public class AnalisadorLexico {
     }
 
     public void generateList() {
-        for (String str : line) {
-            if (isNum(str)) {
-                listTokens.add("NUM_INT," + str);
-            } else if (isDecimal(str)) {
-                listTokens.add("NUM_DECIMAL," + str);
-            } else if (isOp(str)) {
-                listTokens.add(str);
-            } else if (isPalavraReservada(str)) {
-                listTokens.add(str);
-            } else if (isString(str)) {
-                tabelaSimb.add(str);
-                id++;
-                listTokens.add("Id," + str);
-            } else if (isSimb(str)) {
-                listTokens.add(str);
-            } else if (isId(str)) {
-                tabelaSimb.add(str);
-                id++;
-                listTokens.add("Id," + str);
+        for (int i = 0; i < line.length; i++) {
+            if (isNum(line[i])) {
+                listTokens.add("NUM_INT_" + line[i]);
+            } else if (isDecimal(line[i])) {
+                listTokens.add("NUM_DECIMAL_" + line[i]);
+            } else if (isOp(line[i])) {
+                listTokens.add(line[i]);
+            } else if (isPalavraReservada(line[i])) {
+                listTokens.add(line[i]);
+            } else if (isString(line[i])) {
+                listTokens.add("LITERAL_" + line[i]);
+            } else if (isStringComp(line[i])) {
+                Pattern strCompF = Pattern.compile("\"[a-zA-Z]+");
+                String stringConcat = "";
+                for (int j = i; j < line.length; j++) {
+                    Matcher matcherCompF = strCompF.matcher(line[j]);
+                    stringConcat += " " + line[j];
+                    if (matcherCompF.matches()) {
+                        i = j;
+                        break;
+                    }
+                }
+                listTokens.add("LITERAL_" + stringConcat);
+
+            } else if (isSimb(line[i])) {
+                listTokens.add(line[i]);
+            } else if (isId(line[i])) {
+                if (!tabelaSimb.contains(line[i])) {
+                    tabelaSimb.add(line[i]);
+                    id++;
+                    listTokens.add("ID_" + id);
+                } else {
+                    listTokens.add("ID_" + (tabelaSimb.indexOf(line[i]) + 1));
+                }
+            } else if (isComment(line[i])) {
+                continue;
+            } else if (line[i].equals("")) {
+                continue;
+            } else if (line[i].equals("\n")) {
+                continue;
             } else {
                 throw new RuntimeException("Token Invalido");
             }
@@ -54,13 +75,19 @@ public class AnalisadorLexico {
     }
 
     public boolean isString(String lex) {
-        Pattern str = Pattern.compile("\"[a-zA-Z]+\"");
+        Pattern str = Pattern.compile(" \"[a-zA-Z]+\"");
         Matcher matcher = str.matcher(lex);
         return matcher.matches();
     }
 
+    public boolean isStringComp(String lex) {
+        Pattern strComp = Pattern.compile("\"[a-zA-Z]+");
+        Matcher matcherComp = strComp.matcher(lex);
+        return matcherComp.matches();
+    }
+
     public boolean isId(String lex) {
-        Pattern id = Pattern.compile("[a-zA-Z][a-zA-Z0-9]*");
+        Pattern id = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_]*");
         Matcher matcher = id.matcher(lex);
         return matcher.matches();
     }
