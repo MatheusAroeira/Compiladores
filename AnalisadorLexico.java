@@ -3,7 +3,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AnalisadorLexico {
-    private Pattern identificador = Pattern.compile("[a-zA-Z][a-zA-Z0-9]*");
     private String[] pReserv;
     private String[] operadores;
     private String[] simb;
@@ -13,8 +12,6 @@ public class AnalisadorLexico {
     private String simbolo;
     private int id;
     private int index;
-    private int[] alfNum;
-    private char[] alfChar;
     private String[] line;
 
     public AnalisadorLexico(String[] line) {
@@ -27,16 +24,37 @@ public class AnalisadorLexico {
         lex = "";
         simbolo = "";
         id = 0;
-        alfNum = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        alfChar = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
-                's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
-                'V', 'W', 'X', 'Y', 'Z' };
         this.line = line;
     }
 
+    public void generateList() {
+        for (String str : line) {
+            if (isNum(str)) {
+                listTokens.add("NUM_INT," + str);
+            } else if (isDecimal(str)) {
+                listTokens.add("NUM_DECIMAL," + str);
+            } else if (isOp(str)) {
+                listTokens.add(str);
+            } else if (isPalavraReservada(str)) {
+                listTokens.add(str);
+            } else if (isString(str)) {
+                tabelaSimb.add(str);
+                id++;
+                listTokens.add("Id," + str);
+            } else if (isSimb(str)) {
+                listTokens.add(str);
+            } else if (isId(str)) {
+                tabelaSimb.add(str);
+                id++;
+                listTokens.add("Id," + str);
+            } else {
+                throw new RuntimeException("Token Invalido");
+            }
+        }
+    }
+
     public boolean isString(String lex) {
-        Pattern str = Pattern.compile("[a-zA-Z]*");
+        Pattern str = Pattern.compile("\"[a-zA-Z]+\"");
         Matcher matcher = str.matcher(lex);
         return matcher.matches();
     }
@@ -46,22 +64,51 @@ public class AnalisadorLexico {
         Matcher matcher = id.matcher(lex);
         return matcher.matches();
     }
-    public boolean isNum(String lex){
-        Pattern id = Pattern.compile("[0-9]*");
+
+    public boolean isNum(String lex) {
+        Pattern id = Pattern.compile("[0-9]+");
         Matcher matcher = id.matcher(lex);
         return matcher.matches();
     }
 
-    public boolean isDecimal(String lex){
+    public boolean isDecimal(String lex) {
         Pattern id = Pattern.compile("[0-9].[0-9]*");
         Matcher matcher = id.matcher(lex);
         return matcher.matches();
     }
 
-    public boolean isComment(String lex){
-        Pattern com = Pattern.compile("//[a-zA-Z]*");
+    public boolean isComment(String lex) {
+        Pattern com = Pattern.compile("//[a-zA-Z]\n*");
         Matcher matcher = com.matcher(lex);
         return matcher.matches();
+    }
+
+    public boolean isPalavraReservada(String lex) {
+        for (String str : pReserv) {
+            if (str.equals(lex)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isOp(String lex) {
+
+        for (String str : operadores) {
+            if (str.equals(lex)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isSimb(String lex) {
+        for (String str : simb) {
+            if (str.equals(lex)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getpReserv() {
@@ -76,12 +123,12 @@ public class AnalisadorLexico {
         return this.simb.toString();
     }
 
-    public ArrayList<String> getTabelaSimb() {
-        return this.tabelaSimb;
+    public String getTabelaSimb() {
+        return this.tabelaSimb.toString();
     }
 
-    public ArrayList<String> getListTokens() {
-        return this.listTokens;
+    public String getListTokens() {
+        return this.listTokens.toString();
     }
 
     public String getLex() {
@@ -100,14 +147,6 @@ public class AnalisadorLexico {
         return this.index;
     }
 
-    public String getAlfNum() {
-        return this.alfNum.toString();
-    }
-
-    public String getAlfChar() {
-        return this.alfChar.toString();
-    }
-
     public void setLex(String lex) {
         this.lex = lex;
     }
@@ -122,6 +161,10 @@ public class AnalisadorLexico {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public String getLine() {
+        return line.toString();
     }
 
 }
